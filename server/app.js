@@ -1,12 +1,25 @@
 const express = require("express");
+require("dotenv").config();
+const db = require("./util/db");
+db();
 const app = express();
-const http = require("http");
-const server = http.createServer(app);
+const bodyParser = require("body-parser");
+app.use(bodyParser.json({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get("/", (req, res) => {
-  res.send("<h1>Hello world</h1>");
+// Import the auth routes
+const authRoutes = require("./routes/auth");
+
+// Use the auth routes at the specified path
+app.use("/api/v1", authRoutes);
+
+const { createServer } = require("http");
+const { Server } = require("socket.io");
+const server = createServer(app);
+const io = new Server(server);
+io.on("connection", (socket) => {
+  console.log("a user connected");
 });
-
-server.listen(3000, () => {
-  console.log("listening on *:3000");
+server.listen(process.env.PORT, () => {
+  console.log(`Server running at http://localhost:${process.env.PORT}`);
 });

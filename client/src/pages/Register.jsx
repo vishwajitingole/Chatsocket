@@ -1,22 +1,33 @@
 import React, { useRef } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
-function Login() {
+function Register() {
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
   const nav = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const email = emailRef.current.value;
+    const username = emailRef.current.value;
     const password = passwordRef.current.value;
 
-    console.log(email, password);
+    try {
+      const res = await axios.post("http://localhost:3000/api/v1/signup", {
+        username,
+        password,
+      });
+
+      console.log(res.data); // Assuming the response contains useful data
+
+      nav("/chat"); // Redirect to chat page upon successful registration
+    } catch (error) {
+      console.error("Registration error:", error);
+    }
+
     emailRef.current.value = "";
     passwordRef.current.value = "";
-
-    nav("/chat");
   };
 
   return (
@@ -104,4 +115,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Register;

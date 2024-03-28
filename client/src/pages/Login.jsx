@@ -39,7 +39,6 @@ function Login() {
         <motion.div
           animate={{ scale: 1 }}
           initial={{ scale: 0 }}
-          transition={{ duration: 0.2 }}
           className="text-4xl"
         >
           Login
