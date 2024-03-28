@@ -21,22 +21,29 @@ app.get("/", (req, res) => {
 
 app.use("/api/v1", authRoutes);
 
-const server = http.createServer(app); // Create HTTP server instance
+const server = http.createServer(app);
 
 // Attach socket.io to the server
+//yaa fir hum chahe toh isse different port pe bhi run kar sakte hai
 const io = new Server(server, {
   cors: {
-    origin: "*", // Allow requests from any origin, you should adjust this in production
+    origin: "*",
   },
 });
 
 io.on("connection", (socket) => {
   console.log("A client connected");
 
-  socket.emit("hello", "Hello from server");
+  socket.emit("hello", "Hello from server" + socket.id);
 
   socket.on("howdy", (arg) => {
     console.log(arg);
+  });
+  // Ye Listener hai
+  socket.on("message", (message) => {
+    console.log("Received message:", message);
+    // Broadcast se kya hota wo data yaa message khudke alawa sabko bhej deta hai
+    socket.broadcast.emit("message", message);
   });
 
   socket.on("disconnect", () => {
