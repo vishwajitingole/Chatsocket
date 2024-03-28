@@ -1,0 +1,10 @@
+[build]
+functions = "functions"
+publish = "public"
+command = "npm run build" # If you need to build your app before deployment
+
+[[plugins]]
+package = "@netlify/plugin-functions-install-core"
+
+[[plugins]]
+package = "@netlify/plugin-nextjs"

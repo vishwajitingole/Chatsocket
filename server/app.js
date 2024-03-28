@@ -25,7 +25,7 @@ const server = http.createServer(app);
 // sath attach kar rahe hain, jisse ki Express ke functions HTTP server
 //ke requests aur responses ke sath integrate ho jaate hain.
 // Yeh kyun zaroori hai? Kyunki Socket.IO bhi ek aise library hai jo HTTP
-// server ke saath kaam karta hai. Isliye, jab hum Socket.IO ko
+// server ke saath kaam karti hai. Isliye, jab hum Socket.IO ko
 // Express ke saath integrate karte hain, toh humein Express app
 // ko pehle se hi HTTP server ke sath connect karna hota hai, aur uske
 // baad Socket.IO ko attach karna hota hai. Isi liye hum Express app ko
