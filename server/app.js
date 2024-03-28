@@ -53,6 +53,6 @@ wss.on("connection", (ws) => {
   });
 });
 
-server.listen(3000, () => {
+server.listen(process.env.PORT, () => {
   console.log(`Server running at http://localhost:${process.env.PORT}`);
 });

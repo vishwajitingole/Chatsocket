@@ -1,75 +1,78 @@
-import React, { useEffect, useState } from "react";
-import io from "socket.io-client";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
-const Chat = () => {
+const Message = ({ sender, text }) => (
+  <motion.div
+    className={`p-2 m-2 max-w-xs ${
+      sender === "me" ? "bg-blue-500 text-white self-end" : "bg-gray-300"
+    } rounded-md`}
+    initial={{ opacity: 0, scale: 0.5 }}
+    animate={{ opacity: 1, scale: 1 }}
+    transition={{ duration: 0.2 }}
+  >
+    <p>{sender === "me" ? "Me: " : "Other: "}</p>
+    <p>{text}</p>
+  </motion.div>
+);
+
+const App = () => {
+  const [socket, setSocket] = useState(null);
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
-  const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const socket = io(`ws://localhost:3000`);
+    const newSocket = new WebSocket("ws://localhost:3000");
 
-    socket.on("connect", () => {
-      console.log("Connected to Socket.IO server");
-    });
-
-    socket.on("disconnect", () => {
-      console.log("Disconnected from Socket.IO server");
-    });
-
-    socket.on("message", (message) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
-    });
-
-    setSocket(socket); // Save the socket instance in state
-
-    return () => {
-      socket.disconnect(); // Disconnect from the Socket.IO server when the component unmounts
+    newSocket.onopen = () => {
+      console.log("Connected to server");
     };
+
+    newSocket.onmessage = (event) => {
+      const reader = new FileReader();
+      reader.onload = function () {
+        const receivedMessage = reader.result;
+        console.log("Received message:", receivedMessage);
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { sender: "other", message: receivedMessage },
+        ]);
+      };
+      reader.readAsText(event.data);
+    };
+
+    setSocket(newSocket);
+
+    return () => newSocket.close();
   }, []);
 
   const sendMessage = () => {
-    console.log(socket);
-    if (socket && inputMessage.trim() !== "") {
-      socket.emit("message", inputMessage);
-      setInputMessage("");
-    } else {
-      console.error("Socket is not initialized or input message is empty");
-    }
+    if (inputMessage.trim() === "") return; // Don't send empty messages
+
+    socket.send(inputMessage);
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { sender: "me", message: inputMessage },
+    ]);
+    setInputMessage(""); // Clear input after sending
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
-      <header className="p-4 bg-blue-500 text-white text-center">
-        <h1 className="text-xl font-bold">Real-time Chat</h1>
-      </header>
-      <div className="flex-1 p-4 overflow-y-auto">
-        {messages.map((message, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="mb-2"
-          >
-            <div className="bg-white p-2 rounded shadow">
-              <p className="text-gray-800">{message}</p>
-            </div>
-          </motion.div>
+    <div className="flex flex-col items-center justify-center h-screen">
+      <div className="flex flex-col space-y-2">
+        {messages.map((msg, index) => (
+          <Message key={index} sender={msg.sender} text={msg.message} />
         ))}
       </div>
-      <div className="p-4 bg-white border-t border-gray-200">
+      <div className="flex items-center justify-center mt-4">
         <input
           type="text"
-          className="w-full border border-gray-300 rounded p-2 focus:outline-none focus:border-blue-500"
-          placeholder="Type your message..."
+          className="px-2 py-1 mr-2 border rounded"
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
+          placeholder="Type your message"
         />
         <button
-          className="mt-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:bg-blue-600"
+          className="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
           onClick={sendMessage}
         >
           Send
@@ -79,4 +82,4 @@ const Chat = () => {
   );
 };
 
-export default Chat;
+export default App;
