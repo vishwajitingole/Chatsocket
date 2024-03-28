@@ -3,8 +3,10 @@ import { motion } from "framer-motion";
 
 const Message = ({ sender, text }) => (
   <motion.div
-    className={`p-2 m-2 max-w-xs ${
-      sender === "me" ? "bg-blue-500 text-white self-end" : "bg-gray-300"
+    className={`p-2 m-2 flex max-w-xs ${
+      sender === "me"
+        ? "bg-blue-500 text-white self-start ml-[-10vw]"
+        : "bg-gray-300 self-start mr-[-20vw]"
     } rounded-md`}
     initial={{ opacity: 0, scale: 0.5 }}
     animate={{ opacity: 1, scale: 1 }}
