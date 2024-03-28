@@ -10,24 +10,22 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const username = emailRef.current.value;
-    const password = passwordRef.current.value;
+    let username = emailRef.current.value;
+    let password = passwordRef.current.value;
 
     try {
-      const res = await axios.post("http://localhost:3000/api/v1/signup", {
-        username,
-        password,
-      });
-
-      console.log(res.data); // Assuming the response contains useful data
-
-      nav("/chat"); // Redirect to chat page upon successful registration
+      await axios
+        .post("http://localhost:3000/api/v1/signup", {
+          username,
+          password,
+        })
+        .then(() => {
+          emailRef.current.value = "";
+          passwordRef.current.value = "";
+        });
     } catch (error) {
-      console.error("Registration error:", error);
+      console.log(error);
     }
-
-    emailRef.current.value = "";
-    passwordRef.current.value = "";
   };
 
   return (

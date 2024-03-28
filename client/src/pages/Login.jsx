@@ -1,22 +1,32 @@
 import React, { useRef } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
-function Login() {
+function Login({ login }) {
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
   const nav = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const email = emailRef.current.value;
+    const username = emailRef.current.value;
     const password = passwordRef.current.value;
 
-    console.log(email, password);
-    emailRef.current.value = "";
-    passwordRef.current.value = "";
-
-    nav("/chat");
+    try {
+      axios
+        .post("http://localhost:3000/api/v1/login", {
+          username,
+          password,
+        })
+        .then(() => {
+          login();
+          emailRef.current.value = "";
+          passwordRef.current.value = "";
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
