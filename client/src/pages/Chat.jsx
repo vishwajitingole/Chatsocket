@@ -7,7 +7,7 @@ function Chat() {
   const inputRef = useRef(null);
 
   useEffect(() => {
-    const socket = io("http://localhost:3000");
+    const socket = io("https://chatsocket-7.onrender.com/");
 
     //Listener
     socket.on("message", (message) => {
