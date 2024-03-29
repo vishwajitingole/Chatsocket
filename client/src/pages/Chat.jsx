@@ -9,10 +9,12 @@ function Chat() {
   useEffect(() => {
     const socket = io("http://localhost:3000");
 
+    //Listener
     socket.on("message", (message) => {
       setReceivedMessages((prevMessages) => [...prevMessages, message]);
     });
 
+    //Ye part tab chalega jab hum  pageko close karte tab
     return () => {
       socket.disconnect();
     };
@@ -21,9 +23,10 @@ function Chat() {
   const sendMessage = () => {
     if (inputMessage.trim() !== "") {
       const socket = io("http://localhost:3000");
+      //Event
       socket.emit("message", inputMessage);
       setInputMessage("");
-      inputRef.current.focus(); // Focus the input field after sending message
+      inputRef.current.focus(); //Submmit ke baad aksar cursor focus humara input se nikal jta toh ye set kardega
     }
   };
 
@@ -38,7 +41,7 @@ function Chat() {
         type="text"
         value={inputMessage}
         onChange={(e) => setInputMessage(e.target.value)}
-        ref={inputRef} // Assign the ref to the input element
+        ref={inputRef}
       />
       <button onClick={sendMessage}>Send</button>
     </div>

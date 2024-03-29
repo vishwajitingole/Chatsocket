@@ -34,6 +34,7 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   console.log("A client connected");
 
+  //Ye ek Event hai jo run hoga kisi listener ke trigger pe
   socket.emit("hello", "Hello from server" + socket.id);
 
   socket.on("howdy", (arg) => {
